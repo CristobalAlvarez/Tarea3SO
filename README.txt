@@ -1,6 +1,9 @@
 Cristobal Alvarez 201873629-5
 Nicolas Puente 201873
 
+COMPILAR CON "make"
+EJECUTAR CON "make run"
+
 Pregunta 1
 - Las funciones deben ingresarse mediante "funciones.txt" dentro de la misma carpeta, tal como esta actualmente.
 - La variable de cada funcion siempre debe ser "x".

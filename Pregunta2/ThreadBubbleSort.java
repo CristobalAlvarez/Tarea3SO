@@ -47,32 +47,34 @@ public class ThreadBubbleSort extends Thread{
     //  Implementacion bubbleSort con hilos
     public void run() {
 
-        if (this.n == 1) {
-            return;
-        }
-
-        for (int i = 0; i < n - 1; i++)
-            if (this.arr[i] > this.arr[i + 1]) {
-
-                int temp = this.arr[i];
-                this.arr[i] = this.arr[i + 1];
-                this.arr[i + 1] = temp;
+        try{
+        
+            if (this.n == 1) {
+                return;
             }
 
-        try {
-            
-            //  Creamos nuevo hilo
-            ThreadBubbleSort thread = new ThreadBubbleSort(this.arr, this.n - 1);
+            for (int i = 0; i < n - 1; i++)
+                if (this.arr[i] > this.arr[i + 1]){
 
-            //  Iniciamos hilo
-            thread.start();
+                    int temp = this.arr[i];
+                    this.arr[i] = this.arr[i + 1];
+                    this.arr[i + 1] = temp;
+                    
+                }
 
-            //  Esperamos termino de hilo
-            thread.join();
+                //  Creamos nuevo hilo
+                ThreadBubbleSort thread = new ThreadBubbleSort(this.arr, this.n - 1);
+
+                //  Iniciamos hilo
+                thread.start();
+
+                //  Esperamos termino de hilo
+                thread.join();
 
         } catch (InterruptedException ie) {
             ie.printStackTrace();
         }
+
     }
 
 }

@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
+import java.util.ArrayList;
 
 public class Funciones extends Thread {
 
@@ -26,41 +27,46 @@ public class Funciones extends Thread {
         return this.result;
     }
 
+    //  Obtenemos funcion a evaluar
+    public String getFunction(){
+        return this.function_to_evaluate;
+    } 
+
     //  Funcion que corre en thread
     public void run() {
         
-        String expression = this.functions_dict.get(this.function_to_evaluate);
+        try{
 
-        //  Buscamos todas las funciones, 
-        //      Ej: function_to_evaluate(x)*g(x)/2 tiene dos match, function_to_evaluate(x) y g(x)
-        Pattern pattern = Pattern.compile("([a-z][(]x[)])", Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(expression);
+            String expression = this.functions_dict.get(this.function_to_evaluate);
+        
+            //  Buscamos todas las funciones, 
+            //      Ej: function_to_evaluate(x)*g(x)/2 tiene dos match, function_to_evaluate(x) y g(x)
+            Pattern pattern = Pattern.compile("([a-z][(]x[)])", Pattern.CASE_INSENSITIVE);
+            Matcher matcher = pattern.matcher(expression);
 
-        while(matcher.find()) {
+            ArrayList<Funciones> threads_list = new ArrayList<Funciones>(); //  Arreglo para guardar los threads creados
 
-            String match = matcher.group().replace(" ", "");  //  Obtenemos funcion que hizo match con la expresion regular
+            while(matcher.find()) {
 
-            try {
-
+                String match = matcher.group().replace(" ", "");  //  Obtenemos funcion que hizo match con la expresion regular
                 String funct_to_evaluate = match.substring(0,1) + "(x)"; // Funcion a evaluar. Ej: "f"+"(x)"
 
                 Funciones thread = new Funciones(funct_to_evaluate, this.number_to_evaluate, this.functions_dict);    //  Inicializamos thread
 
+                threads_list.add(thread);    //  Guardamos para luego obtener resultado
+
                 thread.start(); //  Iniciamos thread
-                thread.join();  //  Esperamos termino de thread
-
-                this.result = thread.getResult();   //  Obtenemos resultado hilo
-
-                expression = expression.replace(match, String.valueOf(this.result));   //  Remplazamos funcion con expression obtenido
-
-            } catch (InterruptedException ie) {
-                ie.printStackTrace();
 
             }
-        }
+            
+            //  Recorremos threads creados, esperamos que termine, obtenemos resultado y modificamos expresion
+            for(Funciones thread : threads_list){
+                thread.join();  //  Esperamos termino
 
-        try {
-   
+                this.result = thread.getResult();   //  Obtenemos resultado hilo
+                expression = expression.replace(thread.getFunction(), String.valueOf(this.result));   //  Remplazamos funcion con expression obtenido
+            }
+
             //  Iniciamos para utilizar
             ScriptEngineManager mgr = new ScriptEngineManager();
             ScriptEngine engine = mgr.getEngineByName("JavaScript"); 
@@ -72,6 +78,9 @@ public class Funciones extends Thread {
 
         } catch (ScriptException e) {
             System.err.println(e.getMessage());
+
+        } catch (InterruptedException ie) {
+            ie.printStackTrace();
 
         }
 

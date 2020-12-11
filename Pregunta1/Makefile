@@ -10,8 +10,7 @@ FILE=
 
 CLASSES = \
 		Main.java \
-		BubbleSort.java \
-		ThreadBubbleSort.java \
+		Funciones.java \
 
 MAIN = Main
 
