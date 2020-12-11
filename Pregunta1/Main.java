@@ -44,6 +44,8 @@ public class Main {
 
             }
 
+            System.out.println("Funciones ingresadas!");
+
         } catch (IOException e) {
             System.out.print(e);
         }
@@ -54,7 +56,7 @@ public class Main {
 
             // Leemos input
             Scanner myObj = new Scanner(System.in);
-            System.out.print("Ingresa una funcion: ");
+            System.out.print("Ingrese operacion: ");
             String func = myObj.nextLine();
 
             if (!func.equals("SALIR")) {
